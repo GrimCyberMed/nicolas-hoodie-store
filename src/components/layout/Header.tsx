@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ThemeToggle } from './ThemeToggle';
 import { CartIcon } from '@/components/cart/CartIcon';
 
@@ -14,8 +15,17 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-foreground hover:text-accent transition-colors">
-              Nicolas Hoodie Store
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+              <Image 
+                src="/logo.svg" 
+                alt="Nicolas Hoodie Store Logo" 
+                width={40} 
+                height={40}
+                className="w-10 h-10"
+              />
+              <span className="text-xl font-bold text-foreground hidden sm:inline">
+                Nicolas Hoodie Store
+              </span>
             </Link>
           </div>
 

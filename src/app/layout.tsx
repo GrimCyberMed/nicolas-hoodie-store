@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   title: 'Nicolas Hoodie Store - Premium Hoodies',
   description: 'Shop the finest collection of premium hoodies with modern designs and superior comfort.',
   keywords: ['hoodies', 'sweatshirts', 'streetwear', 'fashion'],
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/logo.svg',
+  },
 };
 
 export default function RootLayout({

@@ -1,856 +1,672 @@
-# Implementation Plan: Upgradable Structure for E-Commerce Features
+# Implementation Plan: Nicolas Hoodie Store - Complete E-Commerce Platform
 
-## Overview
-This document outlines a comprehensive, scalable plan to add three key features to the Nicolas Hoodie Store:
-1. **Welcome Page** (Enhanced Landing Experience)
-2. **Inventory Page** (Product listing with search and filters)
-3. **Admin Dashboard** (Product and order management)
+## 📋 Project Status
 
-## 🎯 Core Design Principles
+**Current Phase:** Deployment Complete ✅  
+**Next Phase:** Feature Enhancements (Phases 5-10)
 
-### Modularity
-- Component-based architecture for easy reuse
-- Separation of concerns (UI, logic, data)
-- Feature-based folder structure
-
-### Scalability
-- Prepared for future features (user auth, reviews, wishlist)
-- Database schema supports extensions
-- API routes follow RESTful patterns
-
-### Maintainability
-- TypeScript for type safety
-- Clear naming conventions
-- Comprehensive documentation
-- Reusable utility functions
+### Completed Phases (1-4)
+- ✅ Phase 1: Foundation (Theme system, UI components, Layout)
+- ✅ Phase 2: Shopping Cart (Zustand, persistent storage, cart drawer)
+- ✅ Phase 3: Product Catalog (Filtering, search, pagination, API)
+- ✅ Phase 4: Admin Dashboard (Product CRUD, database schema, orders page)
+- ✅ Deployment: Supabase + Vercel (Live at production)
 
 ---
 
-## 📁 Proposed File Structure
+## 🚀 NEW FEATURE ROADMAP (Phases 5-10)
 
-```
-src/
-├── app/
-│   ├── layout.tsx                    # Root layout (existing)
-│   ├── page.tsx                      # Homepage/Welcome (enhance)
-│   ├── products/
-│   │   ├── page.tsx                  # ✨ NEW: Inventory page
-│   │   ├── [id]/
-│   │   │   └── page.tsx             # Product detail page
-│   │   └── loading.tsx              # Loading state
-│   ├── admin/
-│   │   ├── layout.tsx               # ✨ NEW: Admin layout
-│   │   ├── page.tsx                 # ✨ NEW: Admin dashboard
-│   │   ├── products/
-│   │   │   ├── page.tsx            # ✨ NEW: Product management
-│   │   │   ├── new/page.tsx        # ✨ NEW: Add product
-│   │   │   └── [id]/edit/page.tsx  # ✨ NEW: Edit product
-│   │   └── orders/
-│   │       └── page.tsx             # ✨ NEW: Order management
-│   ├── cart/
-│   │   └── page.tsx                 # Shopping cart (future)
-│   └── api/
-│       ├── products/
-│       │   ├── route.ts             # ✨ NEW: GET, POST products
-│       │   └── [id]/route.ts        # ✨ NEW: GET, PUT, DELETE
-│       └── orders/
-│           └── route.ts             # ✨ NEW: Order endpoints
-│
-├── modules/
-│   ├── common/                       # Shared components
-│   │   ├── Button.tsx               # (existing)
-│   │   ├── Input.tsx                # ✨ NEW: Form input
-│   │   ├── SearchBar.tsx            # ✨ NEW: Search component
-│   │   ├── Pagination.tsx           # ✨ NEW: Pagination
-│   │   ├── LoadingSpinner.tsx       # ✨ NEW: Loading state
-│   │   └── Modal.tsx                # ✨ NEW: Modal dialog
-│   │
-│   ├── layout/                       # Layout components
-│   │   ├── Header.tsx               # ✨ NEW: Site header
-│   │   ├── Footer.tsx               # ✨ NEW: Site footer
-│   │   ├── Sidebar.tsx              # ✨ NEW: Filter sidebar
-│   │   └── AdminNav.tsx             # ✨ NEW: Admin navigation
-│   │
-│   ├── catalog/                      # Product display
-│   │   ├── ProductCard.tsx          # (existing)
-│   │   ├── ProductGrid.tsx          # ✨ NEW: Product grid
-│   │   ├── ProductList.tsx          # ✨ NEW: Product list view
-│   │   ├── FilterPanel.tsx          # ✨ NEW: Filter sidebar
-│   │   └── SortDropdown.tsx         # ✨ NEW: Sort options
-│   │
-│   ├── admin/                        # Admin components
-│   │   ├── ProductForm.tsx          # ✨ NEW: Add/Edit product
-│   │   ├── ProductTable.tsx         # ✨ NEW: Product list
-│   │   ├── OrderTable.tsx           # ✨ NEW: Order list
-│   │   ├── StatsCard.tsx            # ✨ NEW: Dashboard stats
-│   │   └── ImageUpload.tsx          # ✨ NEW: Image uploader
-│   │
-│   └── home/                         # ✨ NEW: Homepage sections
-│       ├── HeroSection.tsx
-│       ├── FeaturesSection.tsx
-│       ├── FeaturedProducts.tsx
-│       └── CTASection.tsx
-│
-├── lib/
-│   ├── supabase.ts                   # (existing)
-│   ├── utils.ts                      # (existing)
-│   ├── api-client.ts                # ✨ NEW: API fetch helpers
-│   ├── validation.ts                # ✨ NEW: Form validation
-│   └── constants.ts                 # ✨ NEW: App constants
-│
-├── hooks/                            # ✨ NEW: Custom hooks
-│   ├── useProducts.ts               # Fetch products
-│   ├── useSearch.ts                 # Search functionality
-│   ├── useFilters.ts                # Filter state
-│   ├── usePagination.ts             # Pagination logic
-│   └── useDebounce.ts               # Debounce input
-│
-├── store/                            # ✨ NEW: Zustand stores
-│   ├── cartStore.ts                 # Shopping cart state
-│   ├── filterStore.ts               # Filter state
-│   └── adminStore.ts                # Admin state
-│
-└── types/
-    ├── index.ts                      # (existing types)
-    └── admin.ts                      # ✨ NEW: Admin types
-```
+### **PHASE 5: Authentication & Authorization** 🔐
+**Priority:** HIGH | **Estimated Time:** 1-2 weeks
 
----
+#### Issues Identified:
+- ❌ No login/signup page or buttons
+- ❌ No way to access admin page (unprotected routes)
+- ❌ No user role system
 
-## 🗄️ Database Schema Updates
+#### Tasks:
+1. **Setup Supabase Authentication**
+   - Configure email/password authentication
+   - Set up OAuth providers (Google, GitHub - optional)
+   - Create auth helper functions
 
-### Current Tables
-- `products` ✅
-- `orders` ✅
-- `order_items` ✅
+2. **Create Login/Signup Pages**
+   - `/auth/login` - Login form with validation
+   - `/auth/signup` - Registration form
+   - `/auth/forgot-password` - Password reset
+   - Form validation with Zod
+   - Error handling and user feedback
 
-### Proposed Enhancements
+3. **User Roles System**
+   - Create `user_roles` table in database
+   - Add `role` column to users (admin, customer)
+   - Create RLS policies for role-based access
 
+4. **Authentication Middleware**
+   - Protect `/admin/*` routes
+   - Redirect unauthenticated users to login
+   - Check user role for admin access
+
+5. **UI Updates**
+   - Add Login/Signup buttons to Header
+   - Add user profile dropdown (when logged in)
+   - Show/hide admin link based on role
+   - Add logout functionality
+
+6. **User Profile Page**
+   - `/profile` - User dashboard
+   - Order history
+   - Account settings
+   - Address management
+
+**Database Schema:**
 ```sql
--- Add new columns to products table
-ALTER TABLE products
-ADD COLUMN IF NOT EXISTS size VARCHAR(10),
-ADD COLUMN IF NOT EXISTS color VARCHAR(50),
-ADD COLUMN IF NOT EXISTS tags TEXT[],
-ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false,
-ADD COLUMN IF NOT EXISTS on_sale BOOLEAN DEFAULT false,
-ADD COLUMN IF NOT EXISTS sale_price DECIMAL(10, 2),
-ADD COLUMN IF NOT EXISTS sku VARCHAR(50) UNIQUE,
-ADD COLUMN IF NOT EXISTS slug VARCHAR(255) UNIQUE;
+-- Add role to users
+ALTER TABLE auth.users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'customer';
 
--- Create categories table (future expansion)
-CREATE TABLE IF NOT EXISTS categories (
+-- Create user_roles table
+CREATE TABLE user_roles (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE,
-  slug TEXT NOT NULL UNIQUE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('admin', 'customer')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
+-- Create RLS policies
+ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own role"
+  ON user_roles FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Only admins can manage roles"
+  ON user_roles FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_roles
+      WHERE user_id = auth.uid() AND role = 'admin'
+    )
+  );
+```
+
+---
+
+### **PHASE 6: Discount & Coupon System** 🎟️
+**Priority:** HIGH | **Estimated Time:** 2-3 weeks
+
+#### Features Requested:
+- ✅ Admin can create discount codes
+- ✅ Multiple discount types (%, fixed amount, conditional)
+- ✅ Discount code field at checkout
+- ✅ Buy X Get Y free promotions
+- ✅ Minimum purchase requirements
+
+#### Tasks:
+
+1. **Database Schema**
+   - Create `discount_codes` table
+   - Create `discount_usage` table (track usage)
+   - Add indexes for performance
+
+2. **Discount Types Implementation**
+   - **Percentage Discount** (e.g., 20% off)
+   - **Fixed Amount** (e.g., €10 off)
+   - **Minimum Purchase** (e.g., €5 off orders over €50)
+   - **Buy X Get Y Free** (e.g., Buy 2 Get 1 Free)
+   - **Free Shipping** (future)
+
+3. **Admin Discount Management**
+   - `/admin/discounts` - List all discount codes
+   - `/admin/discounts/new` - Create new discount
+   - `/admin/discounts/[id]/edit` - Edit discount
+   - Discount form with validation
+   - Set expiration dates
+   - Usage limits (total uses, per user)
+   - Active/inactive toggle
+
+4. **Checkout Integration**
+   - Add discount code input field
+   - Validate discount code (API endpoint)
+   - Apply discount to cart total
+   - Show discount breakdown
+   - Handle multiple discount rules
+
+5. **API Endpoints**
+   - `POST /api/discounts/validate` - Validate code
+   - `GET /api/admin/discounts` - List discounts
+   - `POST /api/admin/discounts` - Create discount
+   - `PUT /api/admin/discounts/[id]` - Update discount
+   - `DELETE /api/admin/discounts/[id]` - Delete discount
+
+6. **Discount Logic**
+   - Calculate discount amount
+   - Check eligibility (min purchase, product restrictions)
+   - Track usage count
+   - Prevent stacking (if configured)
+
+**Database Schema:**
+```sql
+CREATE TABLE discount_codes (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  code VARCHAR(50) UNIQUE NOT NULL,
   description TEXT,
-  parent_id UUID REFERENCES categories(id),
+  discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed_amount', 'buy_x_get_y', 'min_purchase')),
+  
+  -- Discount values
+  percentage_off DECIMAL(5,2), -- For percentage type (e.g., 20.00 = 20%)
+  fixed_amount_off DECIMAL(10,2), -- For fixed amount (e.g., 10.00 = €10)
+  min_purchase_amount DECIMAL(10,2), -- Minimum purchase required
+  buy_quantity INTEGER, -- For Buy X Get Y (X value)
+  get_quantity INTEGER, -- For Buy X Get Y (Y value)
+  
+  -- Usage limits
+  max_uses INTEGER, -- NULL = unlimited
+  max_uses_per_user INTEGER DEFAULT 1,
+  current_uses INTEGER DEFAULT 0,
+  
+  -- Validity
+  valid_from TIMESTAMPTZ DEFAULT NOW(),
+  valid_until TIMESTAMPTZ,
+  is_active BOOLEAN DEFAULT true,
+  
+  -- Restrictions
+  applicable_products UUID[], -- NULL = all products
+  applicable_categories TEXT[], -- NULL = all categories
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE discount_usage (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  discount_code_id UUID REFERENCES discount_codes(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id),
+  order_id UUID REFERENCES orders(id),
+  discount_amount DECIMAL(10,2) NOT NULL,
+  used_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_discount_codes_code ON discount_codes(code);
+CREATE INDEX idx_discount_codes_active ON discount_codes(is_active);
+CREATE INDEX idx_discount_usage_user ON discount_usage(user_id);
+CREATE INDEX idx_discount_usage_code ON discount_usage(discount_code_id);
+```
+
+---
+
+### **PHASE 7: Loyalty Points System** 🎁
+**Priority:** MEDIUM | **Estimated Time:** 1-2 weeks
+
+#### Features:
+- ✅ Earn points on purchases
+- ✅ Redeem points for discounts
+- ✅ Points history tracking
+- ✅ Admin configurable point rules
+
+#### Tasks:
+
+1. **Database Schema**
+   - Create `loyalty_points` table
+   - Create `loyalty_transactions` table
+   - Create `loyalty_settings` table
+
+2. **Points Earning System**
+   - Configure points per euro spent (e.g., 1 point per €1)
+   - Award points after order completion
+   - Bonus points for specific actions (signup, referral)
+
+3. **Points Redemption**
+   - Convert points to discount (e.g., 100 points = €1)
+   - Apply points at checkout
+   - Minimum points required for redemption
+
+4. **User Dashboard**
+   - Display current points balance
+   - Points history (earned/redeemed)
+   - Points expiration dates (optional)
+
+5. **Admin Management**
+   - `/admin/loyalty` - Configure loyalty program
+   - Set points earning rate
+   - Set redemption rate
+   - View user points balances
+   - Manual point adjustments
+
+**Database Schema:**
+```sql
+CREATE TABLE loyalty_settings (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  points_per_euro DECIMAL(10,2) DEFAULT 1.00, -- 1 point per €1
+  euros_per_point DECIMAL(10,4) DEFAULT 0.01, -- 100 points = €1
+  min_points_redemption INTEGER DEFAULT 100,
+  points_expiry_days INTEGER, -- NULL = never expire
+  is_active BOOLEAN DEFAULT true,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE loyalty_points (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  total_points INTEGER DEFAULT 0,
+  lifetime_points INTEGER DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
+CREATE TABLE loyalty_transactions (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  points_change INTEGER NOT NULL, -- Positive = earned, Negative = redeemed
+  transaction_type VARCHAR(20) NOT NULL CHECK (transaction_type IN ('earned', 'redeemed', 'expired', 'adjusted')),
+  order_id UUID REFERENCES orders(id),
+  description TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create product_images table (multiple images support)
-CREATE TABLE IF NOT EXISTS product_images (
+CREATE INDEX idx_loyalty_points_user ON loyalty_points(user_id);
+CREATE INDEX idx_loyalty_transactions_user ON loyalty_transactions(user_id);
+```
+
+---
+
+### **PHASE 8: Advertisement System** 📢
+**Priority:** MEDIUM | **Estimated Time:** 1 week
+
+#### Features Requested:
+- ✅ Left and right sidebar advertisements
+- ✅ Admin can upload/manage ads
+- ✅ Clickable ads with tracking
+
+#### Tasks:
+
+1. **Database Schema**
+   - Create `advertisements` table
+   - Track ad clicks and impressions
+
+2. **Advertisement Slots**
+   - Left sidebar (desktop only)
+   - Right sidebar (desktop only)
+   - Banner ads (optional)
+   - Responsive design (hide on mobile)
+
+3. **Admin Management**
+   - `/admin/advertisements` - List all ads
+   - `/admin/advertisements/new` - Create ad
+   - Upload image
+   - Set link URL
+   - Set position (left/right/banner)
+   - Schedule ads (start/end dates)
+   - Active/inactive toggle
+
+4. **Frontend Components**
+   - `<AdSlot>` component
+   - Lazy loading for performance
+   - Click tracking
+   - Impression tracking
+
+5. **Ad Rotation**
+   - Multiple ads per slot
+   - Random rotation
+   - Weighted rotation (priority)
+   - Time-based scheduling
+
+**Database Schema:**
+```sql
+CREATE TABLE advertisements (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
   image_url TEXT NOT NULL,
-  alt_text TEXT,
-  sort_order INTEGER DEFAULT 0,
-  is_primary BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  link_url TEXT NOT NULL,
+  position VARCHAR(20) NOT NULL CHECK (position IN ('left_sidebar', 'right_sidebar', 'banner_top', 'banner_bottom')),
+  priority INTEGER DEFAULT 0, -- Higher = more likely to show
+  
+  -- Scheduling
+  start_date TIMESTAMPTZ DEFAULT NOW(),
+  end_date TIMESTAMPTZ,
+  is_active BOOLEAN DEFAULT true,
+  
+  -- Analytics
+  impressions INTEGER DEFAULT 0,
+  clicks INTEGER DEFAULT 0,
+  
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create filters table (dynamic filter support)
-CREATE TABLE IF NOT EXISTS filters (
+CREATE TABLE ad_analytics (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  name TEXT NOT NULL,
-  type TEXT NOT NULL, -- 'color', 'size', 'price', 'category'
-  values JSONB NOT NULL,
+  advertisement_id UUID REFERENCES advertisements(id) ON DELETE CASCADE,
+  event_type VARCHAR(20) NOT NULL CHECK (event_type IN ('impression', 'click')),
+  user_id UUID REFERENCES auth.users(id),
+  ip_address INET,
+  user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Add indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
-CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
-CREATE INDEX IF NOT EXISTS idx_products_featured ON products(featured);
-CREATE INDEX IF NOT EXISTS idx_products_on_sale ON products(on_sale);
-CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
-
--- Create full-text search index
-CREATE INDEX IF NOT EXISTS idx_products_search 
-ON products USING GIN (to_tsvector('english', name || ' ' || description));
+CREATE INDEX idx_advertisements_position ON advertisements(position);
+CREATE INDEX idx_advertisements_active ON advertisements(is_active);
+CREATE INDEX idx_ad_analytics_ad ON ad_analytics(advertisement_id);
 ```
 
 ---
 
-## 🎨 Feature 1: Enhanced Welcome Page
+### **PHASE 9: Holiday Theme System** 🎄
+**Priority:** MEDIUM | **Estimated Time:** 2 weeks
 
-### Components to Create
+#### Features Requested:
+- ✅ Admin can change site theme
+- ✅ Holiday presets (Black Friday, Christmas, Easter, etc.)
+- ✅ Custom theme colors and logos
+- ✅ Scheduled theme activation
 
-#### 1.1 Header Component
-**Location:** `src/modules/layout/Header.tsx`
+#### Tasks:
 
-**Features:**
-- Logo/Brand name
-- Navigation links (Home, Products, Cart, Admin)
-- Shopping cart icon with item count
-- Mobile responsive menu
+1. **Database Schema**
+   - Create `site_themes` table
+   - Store theme configurations
 
-**State:**
-- Cart item count (from Zustand store)
-- Mobile menu open/closed
+2. **Theme Presets**
+   - **Black Friday** (dark theme, red accents)
+   - **Christmas** (red/green, snow effects)
+   - **Easter** (pastel colors, spring theme)
+   - **Halloween** (orange/black, spooky)
+   - **Valentine's Day** (pink/red, hearts)
+   - **Summer Sale** (bright colors, beach theme)
+   - **Default** (original theme)
 
-#### 1.2 Hero Section
-**Location:** `src/modules/home/HeroSection.tsx`
+3. **Theme Customization**
+   - Primary color
+   - Secondary color
+   - Background color
+   - Text color
+   - Logo upload
+   - Banner image
+   - Custom CSS (advanced)
 
-**Features:**
-- Large hero image/gradient
-- Call-to-action button
-- Tagline/value proposition
-- Smooth scroll animations
+4. **Admin Theme Manager**
+   - `/admin/themes` - Theme management
+   - Select active theme
+   - Preview themes
+   - Schedule theme changes
+   - Create custom themes
 
-#### 1.3 Featured Products
-**Location:** `src/modules/home/FeaturedProducts.tsx`
+5. **Theme Scheduling**
+   - Auto-activate on specific dates
+   - Revert to default after event
+   - Multiple scheduled themes
 
-**Features:**
-- Display 3-6 featured products
-- "Featured" badge
-- Quick view button
-- Link to full product page
+6. **Frontend Implementation**
+   - Dynamic CSS variables
+   - Theme context provider
+   - Smooth theme transitions
+   - Cache theme settings
 
-**Data:**
-- Fetch products with `featured = true`
-
-#### 1.4 Features Section
-**Location:** `src/modules/home/FeaturesSection.tsx`
-
-**Features:**
-- Grid of USPs (Unique Selling Points)
-- Icons for each feature
-- Short descriptions
-
-#### 1.5 CTA Section
-**Location:** `src/modules/home/CTASection.tsx`
-
-**Features:**
-- Newsletter signup (future)
-- Social proof (testimonials, reviews)
-- Final call-to-action
-
-### Implementation Steps
-
-1. **Break down existing page.tsx** into modular components
-2. **Create reusable layout** (Header, Footer)
-3. **Add featured products** carousel/grid
-4. **Implement smooth animations** (optional: Framer Motion)
-5. **Add SEO metadata** (Next.js Metadata API)
-
----
-
-## 🛍️ Feature 2: Inventory Page with Search & Filters
-
-### Core Features
-
-#### 2.1 Search Bar
-**Location:** `src/modules/common/SearchBar.tsx`
-
-**Features:**
-- Real-time search with debounce (500ms)
-- Search by product name, description
-- Clear search button
-- Loading indicator
-
-**Implementation:**
-```typescript
-// useSearch.ts
-export function useSearch(initialQuery = '') {
-  const [query, setQuery] = useState(initialQuery);
-  const debouncedQuery = useDebounce(query, 500);
+**Database Schema:**
+```sql
+CREATE TABLE site_themes (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT,
   
-  return { query, setQuery, debouncedQuery };
-}
-```
-
-#### 2.2 Filter Sidebar (Left Column)
-**Location:** `src/modules/catalog/FilterPanel.tsx`
-
-**Filter Types:**
-
-1. **Category Filter**
-   - Checkbox list
-   - Multiple selection
-   - Dynamic from database
-
-2. **Price Range Filter**
-   - Min/max inputs
-   - Preset ranges (Under $50, $50-$100, $100+)
-   - Slider (optional)
-
-3. **Color Filter**
-   - Color swatches
-   - Multiple selection
-
-4. **Size Filter**
-   - Checkbox list (XS, S, M, L, XL, XXL)
-
-5. **Availability Filter**
-   - In Stock only toggle
-   - On Sale toggle
-
-**State Management:**
-```typescript
-// filterStore.ts (Zustand)
-interface FilterState {
-  categories: string[];
-  priceRange: { min: number; max: number };
-  colors: string[];
-  sizes: string[];
-  inStockOnly: boolean;
-  onSaleOnly: boolean;
+  -- Colors (CSS variables)
+  primary_color VARCHAR(7) DEFAULT '#000000',
+  secondary_color VARCHAR(7) DEFAULT '#ffffff',
+  accent_color VARCHAR(7) DEFAULT '#ff0000',
+  background_color VARCHAR(7) DEFAULT '#ffffff',
+  text_color VARCHAR(7) DEFAULT '#000000',
   
-  setCategories: (categories: string[]) => void;
-  setPriceRange: (range: { min: number; max: number }) => void;
-  setColors: (colors: string[]) => void;
-  setSizes: (sizes: string[]) => void;
-  toggleInStockOnly: () => void;
-  toggleOnSaleOnly: () => void;
-  clearFilters: () => void;
-}
-```
-
-#### 2.3 Product Grid/List View
-**Location:** `src/modules/catalog/ProductGrid.tsx`
-
-**Features:**
-- Grid view (3-4 columns on desktop)
-- List view option (toggle)
-- Responsive (1 column on mobile, 2 on tablet)
-- Empty state message
-
-**Product Card Enhancements:**
-- Sale badge
-- Out of stock overlay
-- Quick view button
-- Add to cart button (hover)
-
-#### 2.4 Sort Dropdown
-**Location:** `src/modules/catalog/SortDropdown.tsx`
-
-**Sort Options:**
-- Featured
-- Price: Low to High
-- Price: High to Low
-- Name: A to Z
-- Name: Z to A
-- Newest First
-
-#### 2.5 Pagination
-**Location:** `src/modules/common/Pagination.tsx`
-
-**Features:**
-- Page numbers
-- Previous/Next buttons
-- Jump to first/last page
-- Items per page selector (12, 24, 48)
-
-**Implementation:**
-```typescript
-// usePagination.ts
-export function usePagination(totalItems: number, itemsPerPage: number) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  -- Assets
+  logo_url TEXT,
+  banner_url TEXT,
+  favicon_url TEXT,
   
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
-  };
+  -- Custom CSS
+  custom_css TEXT,
   
-  return { currentPage, totalPages, paginate };
-}
-```
-
-### API Endpoints
-
-#### GET /api/products
-**Query Parameters:**
-- `search`: string (search query)
-- `category`: string[] (filter by categories)
-- `minPrice`: number
-- `maxPrice`: number
-- `colors`: string[]
-- `sizes`: string[]
-- `inStockOnly`: boolean
-- `onSaleOnly`: boolean
-- `sortBy`: string ('price_asc', 'price_desc', 'name_asc', etc.)
-- `page`: number (default: 1)
-- `limit`: number (default: 12)
-
-**Response:**
-```json
-{
-  "products": [...],
-  "pagination": {
-    "currentPage": 1,
-    "totalPages": 5,
-    "totalItems": 60,
-    "itemsPerPage": 12
-  },
-  "filters": {
-    "availableCategories": [...],
-    "priceRange": { "min": 0, "max": 200 },
-    "availableColors": [...],
-    "availableSizes": [...]
-  }
-}
-```
-
-### Implementation Steps
-
-1. **Create filter store** (Zustand)
-2. **Build FilterPanel component** with all filter types
-3. **Implement SearchBar** with debounce
-4. **Create API endpoint** with filtering logic
-5. **Build ProductGrid** with responsive layout
-6. **Add SortDropdown** component
-7. **Implement Pagination** component
-8. **Connect all components** with proper state management
-9. **Add loading states** and error handling
-10. **Optimize performance** (memoization, lazy loading)
-
----
-
-## 🔧 Feature 3: Admin Dashboard
-
-### Core Features
-
-#### 3.1 Admin Layout
-**Location:** `src/app/admin/layout.tsx`
-
-**Features:**
-- Sidebar navigation
-- Admin-only access (auth check)
-- Breadcrumb navigation
-- User profile dropdown
-
-#### 3.2 Dashboard Overview
-**Location:** `src/app/admin/page.tsx`
-
-**Widgets:**
-1. **Total Revenue** (card)
-2. **Total Orders** (card)
-3. **Total Products** (card)
-4. **Low Stock Alerts** (card)
-5. **Recent Orders** (table)
-6. **Sales Chart** (optional: Chart.js/Recharts)
-
-#### 3.3 Product Management
-**Location:** `src/app/admin/products/page.tsx`
-
-**Features:**
-- Product table with columns:
-  - Thumbnail
-  - Name
-  - SKU
-  - Category
-  - Price
-  - Stock
-  - Status (Published/Draft)
-  - Actions (Edit, Delete)
-- Search products
-- Filter by category
-- Bulk actions (delete, change status)
-- Add new product button
-
-#### 3.4 Product Form (Add/Edit)
-**Location:** `src/app/admin/products/new/page.tsx`
-
-**Fields:**
-- Name (required)
-- Description (textarea)
-- Price (number)
-- Sale price (optional)
-- SKU (auto-generated option)
-- Category (dropdown)
-- Tags (multi-select)
-- Color (multi-select)
-- Size (multi-select)
-- Stock quantity (number)
-- Featured (checkbox)
-- On sale (checkbox)
-- Images (multiple upload)
-- Status (published/draft)
-
-**Validation:**
-- All required fields
-- Price must be positive
-- SKU must be unique
-- At least one image
-
-**Actions:**
-- Save as Draft
-- Publish
-- Delete (edit mode only)
-
-#### 3.5 Order Management
-**Location:** `src/app/admin/orders/page.tsx`
-
-**Features:**
-- Order table with columns:
-  - Order ID
-  - Customer
-  - Date
-  - Total
-  - Status
-  - Actions (View, Update Status)
-- Filter by status
-- Search by order ID or customer
-- Export orders (CSV)
-
-### API Endpoints
-
-#### Products
-- `GET /api/products` - List products (with admin-only fields)
-- `POST /api/products` - Create product
-- `GET /api/products/[id]` - Get product
-- `PUT /api/products/[id]` - Update product
-- `DELETE /api/products/[id]` - Delete product
-
-#### Orders
-- `GET /api/orders` - List orders
-- `GET /api/orders/[id]` - Get order details
-- `PUT /api/orders/[id]` - Update order status
-
-#### Stats
-- `GET /api/admin/stats` - Dashboard statistics
-
-### Implementation Steps
-
-1. **Create admin layout** with sidebar navigation
-2. **Build dashboard** with stat cards
-3. **Create ProductTable** component
-4. **Build ProductForm** with validation
-5. **Implement image upload** (Supabase Storage)
-6. **Create OrderTable** component
-7. **Add API routes** for CRUD operations
-8. **Implement authentication** check (middleware)
-9. **Add success/error notifications**
-10. **Test all CRUD operations**
-
----
-
-## 🚀 Implementation Roadmap
-
-### Phase 1: Foundation (Week 1-2)
-**Goal:** Set up core infrastructure
-
-- [ ] Update database schema
-- [ ] Create common components (Button, Input, Modal)
-- [ ] Set up Zustand stores (cart, filters)
-- [ ] Create custom hooks (useProducts, useSearch, usePagination)
-- [ ] Build layout components (Header, Footer)
-
-### Phase 2: Welcome Page Enhancement (Week 3)
-**Goal:** Improve homepage UX
-
-- [ ] Break down page.tsx into modular components
-- [ ] Create HeroSection component
-- [ ] Build FeaturedProducts section
-- [ ] Add Features and CTA sections
-- [ ] Implement smooth animations
-- [ ] Add SEO metadata
-
-### Phase 3: Inventory Page (Week 4-5)
-**Goal:** Build full product browsing experience
-
-- [ ] Create FilterPanel component
-- [ ] Build SearchBar with debounce
-- [ ] Implement ProductGrid/List views
-- [ ] Add SortDropdown component
-- [ ] Create Pagination component
-- [ ] Build API endpoint with filtering
-- [ ] Connect all components with state
-- [ ] Add loading and error states
-- [ ] Optimize performance
-
-### Phase 4: Admin Dashboard (Week 6-8)
-**Goal:** Enable product and order management
-
-- [ ] Create admin layout with navigation
-- [ ] Build dashboard overview with stats
-- [ ] Create ProductTable component
-- [ ] Build ProductForm for add/edit
-- [ ] Implement image upload
-- [ ] Create OrderTable component
-- [ ] Add all API routes
-- [ ] Implement auth middleware
-- [ ] Add notifications
-- [ ] Test thoroughly
-
-### Phase 5: Testing & Optimization (Week 9)
-**Goal:** Ensure quality and performance
-
-- [ ] Test all features end-to-end
-- [ ] Fix bugs and edge cases
-- [ ] Optimize images (Next.js Image)
-- [ ] Add loading skeletons
-- [ ] Implement error boundaries
-- [ ] Add analytics (optional)
-- [ ] Write documentation
-
-### Phase 6: Deployment (Week 10)
-**Goal:** Launch to production
-
-- [ ] Environment variables setup
-- [ ] Supabase RLS policies
-- [ ] Deploy to Vercel
-- [ ] Configure custom domain
-- [ ] Set up monitoring
-- [ ] Create backup strategy
-
----
-
-## 🔐 Security Considerations
-
-### Admin Authentication
-```typescript
-// middleware.ts
-export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    const session = await getSession();
-    
-    if (!session || !session.user.isAdmin) {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-  }
-}
-```
-
-### API Route Protection
-```typescript
-// app/api/products/route.ts
-export async function POST(request: Request) {
-  const session = await getSession();
+  -- Scheduling
+  auto_activate_start TIMESTAMPTZ,
+  auto_activate_end TIMESTAMPTZ,
   
-  if (!session?.user?.isAdmin) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  -- Status
+  is_active BOOLEAN DEFAULT false,
+  is_preset BOOLEAN DEFAULT false, -- True for built-in themes
   
-  // ... handle request
-}
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Insert preset themes
+INSERT INTO site_themes (name, slug, primary_color, secondary_color, accent_color, is_preset) VALUES
+('Default', 'default', '#000000', '#ffffff', '#3b82f6', true),
+('Black Friday', 'black-friday', '#000000', '#ff0000', '#fbbf24', true),
+('Christmas', 'christmas', '#dc2626', '#16a34a', '#fbbf24', true),
+('Easter', 'easter', '#fbbf24', '#a855f7', '#ec4899', true),
+('Halloween', 'halloween', '#f97316', '#000000', '#a855f7', true),
+('Valentines', 'valentines', '#ec4899', '#f43f5e', '#fbbf24', true);
+
+CREATE INDEX idx_site_themes_active ON site_themes(is_active);
+CREATE INDEX idx_site_themes_slug ON site_themes(slug);
 ```
 
-### Input Validation
-```typescript
-// lib/validation.ts
-export const productSchema = z.object({
-  name: z.string().min(1).max(255),
-  price: z.number().positive(),
-  description: z.string().optional(),
-  stock_quantity: z.number().int().nonnegative(),
-  // ... more fields
-});
+---
+
+### **PHASE 10: Complete Checkout System** 💳
+**Priority:** HIGH | **Estimated Time:** 2-3 weeks
+
+#### Features:
+- ✅ Full checkout flow
+- ✅ Shipping address form
+- ✅ Payment integration (Stripe/PayPal)
+- ✅ Order confirmation
+- ✅ Email notifications
+
+#### Tasks:
+
+1. **Checkout Page**
+   - `/checkout` - Multi-step checkout
+   - Step 1: Cart review
+   - Step 2: Shipping address
+   - Step 3: Payment method
+   - Step 4: Order confirmation
+
+2. **Shipping Address**
+   - Address form with validation
+   - Save multiple addresses
+   - Set default address
+   - Address autocomplete (Google Places API)
+
+3. **Payment Integration**
+   - Stripe integration
+   - PayPal integration (optional)
+   - Credit card form
+   - Payment validation
+   - Secure payment processing
+
+4. **Order Processing**
+   - Create order in database
+   - Update inventory
+   - Apply discounts
+   - Award loyalty points
+   - Generate order number
+
+5. **Order Confirmation**
+   - Confirmation page
+   - Order summary
+   - Estimated delivery
+   - Download invoice (PDF)
+
+6. **Email Notifications**
+   - Order confirmation email
+   - Shipping notification
+   - Delivery confirmation
+   - Email templates (HTML)
+
+**Database Schema:**
+```sql
+CREATE TABLE shipping_addresses (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name VARCHAR(255) NOT NULL,
+  address_line1 VARCHAR(255) NOT NULL,
+  address_line2 VARCHAR(255),
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100),
+  postal_code VARCHAR(20) NOT NULL,
+  country VARCHAR(100) NOT NULL,
+  phone VARCHAR(20),
+  is_default BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Update orders table
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address_id UUID REFERENCES shipping_addresses(id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50) DEFAULT 'pending';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS stripe_payment_intent_id VARCHAR(255);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_code_id UUID REFERENCES discount_codes(id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount DECIMAL(10,2) DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS loyalty_points_used INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS loyalty_points_earned INTEGER DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS subtotal DECIMAL(10,2) NOT NULL;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_cost DECIMAL(10,2) DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(10,2) DEFAULT 0;
+
+CREATE INDEX idx_shipping_addresses_user ON shipping_addresses(user_id);
+CREATE INDEX idx_orders_payment_status ON orders(payment_status);
 ```
 
 ---
 
-## 📊 Performance Optimization
+## 📊 Implementation Priority
 
-### 1. Image Optimization
-- Use Next.js Image component
-- Implement lazy loading
-- Optimize image sizes (WebP format)
+### **Immediate (Start Now)**
+1. ✅ **Phase 5: Authentication** - Critical for security
+2. ✅ **Phase 10: Checkout** - Core e-commerce functionality
 
-### 2. Data Fetching
-- Server-side rendering for SEO
-- React Suspense for loading states
-- Implement caching (SWR or React Query)
+### **High Priority (Next 2 weeks)**
+3. ✅ **Phase 6: Discount System** - Revenue optimization
+4. ✅ **Phase 8: Advertisements** - Monetization
 
-### 3. Code Splitting
-- Dynamic imports for large components
-- Route-based code splitting (automatic with Next.js)
-
-### 4. Database Queries
-- Add proper indexes
-- Use pagination for large datasets
-- Implement full-text search for better performance
-
----
-
-## 🧪 Testing Strategy
-
-### 1. Unit Tests
-- Component rendering
-- Hook functionality
-- Utility functions
-
-### 2. Integration Tests
-- API endpoints
-- Form submissions
-- State management
-
-### 3. E2E Tests (Optional)
-- User flows (search → filter → add to cart)
-- Admin workflows
-- Checkout process
-
----
-
-## 📈 Future Enhancements
-
-### Short-term (Next 3 months)
-- Shopping cart functionality
-- Stripe checkout integration
-- Order confirmation emails
-- Product reviews and ratings
-- Wishlist feature
-
-### Medium-term (3-6 months)
-- User authentication (Supabase Auth)
-- User profiles and order history
-- Advanced search (autocomplete, suggestions)
-- Product variants (multiple SKUs per product)
-- Inventory management (low stock alerts)
-
-### Long-term (6-12 months)
-- Multi-language support (i18n)
-- Multi-currency support
-- Discount codes and promotions
-- Email marketing integration
-- Analytics dashboard
-- Mobile app (React Native)
-
----
-
-## 📚 Learning Resources
-
-### Next.js
-- [Next.js 14 App Router Docs](https://nextjs.org/docs)
-- [Server Components Guide](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
-
-### TypeScript
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
-
-### Zustand
-- [Zustand Documentation](https://github.com/pmndrs/zustand)
-- [Zustand Best Practices](https://docs.pmnd.rs/zustand/guides/practice-with-no-store-actions)
-
-### Supabase
-- [Supabase JavaScript Client](https://supabase.com/docs/reference/javascript/introduction)
-- [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
+### **Medium Priority (Next 4 weeks)**
+5. ✅ **Phase 7: Loyalty System** - Customer retention
+6. ✅ **Phase 9: Theme System** - Marketing flexibility
 
 ---
 
 ## 🎯 Success Metrics
 
-### Week 4 Checkpoints
-- [ ] Enhanced welcome page live
-- [ ] Basic product filtering works
-- [ ] Search functionality operational
+### Phase 5 (Authentication)
+- [ ] Users can register and login
+- [ ] Admin routes are protected
+- [ ] Role-based access control works
+- [ ] User profile page functional
 
-### Week 8 Checkpoints
-- [ ] Full inventory page complete
-- [ ] Admin dashboard functional
-- [ ] Can add/edit/delete products
+### Phase 6 (Discounts)
+- [ ] Admin can create all discount types
+- [ ] Discount codes validate correctly
+- [ ] Discounts apply to cart total
+- [ ] Usage tracking works
 
-### Week 10 Checkpoints
-- [ ] All features tested
-- [ ] Site deployed to production
-- [ ] Documentation complete
+### Phase 7 (Loyalty)
+- [ ] Points awarded on purchases
+- [ ] Points redeemable at checkout
+- [ ] Points history visible to users
+- [ ] Admin can configure settings
 
----
+### Phase 8 (Advertisements)
+- [ ] Ads display in sidebars
+- [ ] Admin can upload/manage ads
+- [ ] Click tracking works
+- [ ] Ad rotation functional
 
-## 🤝 Collaboration Guidelines
+### Phase 9 (Themes)
+- [ ] Theme presets available
+- [ ] Admin can activate themes
+- [ ] Theme scheduling works
+- [ ] Custom themes can be created
 
-### Using Claude Code
-1. Reference this plan: `@IMPLEMENTATION-PLAN.md`
-2. Use custom commands for consistency
-3. Ask for clarification before major changes
-4. Test each component before moving on
-
-### Git Workflow
-1. Feature branches for each major component
-2. Commit frequently with clear messages
-3. Review before merging to main
-4. Tag releases (v1.0, v1.1, etc.)
-
----
-
-## 📝 Notes
-
-### Design Decisions
-- **Zustand over Redux**: Simpler API, less boilerplate
-- **Server Components**: Better SEO and initial load time
-- **Tailwind CSS**: Rapid development, consistent design
-- **TypeScript**: Type safety reduces bugs
-
-### Trade-offs
-- **Real-time search**: Better UX but more API calls (mitigated with debounce)
-- **Client-side filtering**: Faster but limited to current page (use server-side for full dataset)
-- **Image uploads**: Consider third-party service (Cloudinary) vs Supabase Storage
+### Phase 10 (Checkout)
+- [ ] Full checkout flow works
+- [ ] Payment processing successful
+- [ ] Orders created in database
+- [ ] Confirmation emails sent
 
 ---
 
-## 🆘 Troubleshooting
+## 🔧 Technical Stack
 
-### Common Issues
+### Current Stack
+- **Frontend:** Next.js 16, React, TypeScript, Tailwind CSS
+- **State Management:** Zustand
+- **Database:** Supabase (PostgreSQL)
+- **Hosting:** Vercel
+- **Storage:** Supabase Storage
 
-**Database connection errors**
-- Check `.env.local` variables
-- Verify Supabase project is active
-- Check RLS policies
-
-**TypeScript errors**
-- Run `npm run build` to catch all errors
-- Check type imports
-- Verify interface definitions
-
-**Performance issues**
-- Check network tab for slow queries
-- Optimize images
-- Add loading states
-- Implement pagination
+### New Additions
+- **Authentication:** Supabase Auth
+- **Payments:** Stripe API
+- **Email:** SendGrid / Resend
+- **Analytics:** Google Analytics (optional)
 
 ---
 
-## ✅ Final Checklist Before Launch
+## 📝 Development Guidelines
 
 ### Code Quality
-- [ ] No console.log statements
-- [ ] No TypeScript errors
-- [ ] All components have proper types
-- [ ] Code formatted (Prettier)
+- Write TypeScript for all new code
+- Use ESLint and Prettier
+- Add JSDoc comments for complex functions
+- Write unit tests for critical logic
 
-### Functionality
-- [ ] All features work as expected
-- [ ] Forms validate properly
-- [ ] Error messages are user-friendly
-- [ ] Loading states implemented
+### Git Workflow
+- Create feature branches: `feature/phase-5-auth`
+- Commit frequently with clear messages
+- Create pull requests for review
+- Tag releases: `v2.0.0`, `v2.1.0`, etc.
 
-### Performance
-- [ ] Images optimized
-- [ ] API responses cached
-- [ ] Page load under 3 seconds
-- [ ] Mobile responsive
-
-### Security
-- [ ] Admin routes protected
-- [ ] API endpoints authenticated
-- [ ] Input validation on server
-- [ ] Environment variables secure
-
-### SEO
-- [ ] Meta tags added
-- [ ] Open Graph tags
-- [ ] Sitemap generated
-- [ ] robots.txt configured
+### Testing
+- Test each feature thoroughly before moving on
+- Test on multiple devices (desktop, tablet, mobile)
+- Test edge cases and error scenarios
+- User acceptance testing
 
 ---
 
-**This plan is a living document. Update it as you progress and learn!**
+## 🚀 Getting Started
 
-**Next Steps:**
-1. Review this entire plan
-2. Start with Phase 1: Foundation
-3. Create feature branch: `git checkout -b feature/inventory-system`
-4. Begin building!
+### Next Steps:
+1. **Review this plan** - Understand all phases
+2. **Start Phase 5** - Authentication (highest priority)
+3. **Create feature branch** - `git checkout -b feature/phase-5-auth`
+4. **Follow task list** - Complete tasks in order
+5. **Test thoroughly** - Before moving to next phase
+6. **Deploy updates** - Push to production incrementally
 
-Good luck! 🚀
+### Estimated Timeline:
+- **Phase 5:** 1-2 weeks
+- **Phase 6:** 2-3 weeks
+- **Phase 7:** 1-2 weeks
+- **Phase 8:** 1 week
+- **Phase 9:** 2 weeks
+- **Phase 10:** 2-3 weeks
+
+**Total:** 9-13 weeks (2-3 months)
+
+---
+
+## 📞 Support & Questions
+
+If you need clarification on any phase or task:
+1. Reference this document: `@IMPLEMENTATION-PLAN.md`
+2. Ask specific questions about implementation
+3. Request code examples or guidance
+4. Review completed phases for patterns
+
+---
+
+**Let's build an amazing e-commerce platform! 🚀**
+
+**Ready to start Phase 5?** Type "Start Phase 5" to begin!

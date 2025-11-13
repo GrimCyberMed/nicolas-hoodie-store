@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="32" height="32" fill="#0a0a0a" rx="4"/>
+  
+  <!-- White "N" letter -->
+  <path d="M8 24V8H11V17L21 8H24V24H21V15L11 24H8Z" fill="#ffffff"/>
+</svg>

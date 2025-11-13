@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="200" height="200" fill="#0a0a0a" rx="20"/>
+  
+  <!-- White "N" letter -->
+  <path d="M50 150V50H70V115L130 50H150V150H130V85L70 150H50Z" fill="#ffffff"/>
+  
+  <!-- Subtle accent line (optional) -->
+  <line x1="50" y1="160" x2="150" y2="160" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+</svg>
