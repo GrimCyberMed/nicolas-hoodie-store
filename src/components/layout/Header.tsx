@@ -5,9 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from './ThemeToggle';
 import { CartIcon } from '@/components/cart/CartIcon';
+import { UserDropdown } from '@/components/auth/UserDropdown';
+import { useAuthStore } from '@/store/authStore';
+import { Button } from '@/components/ui/Button';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -55,6 +59,24 @@ export function Header() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             <CartIcon />
+            
+            {/* Auth Buttons / User Dropdown */}
+            {isAuthenticated ? (
+              <UserDropdown />
+            ) : (
+              <div className="hidden md:flex items-center space-x-2">
+                <Link href="/auth/login">
+                  <Button variant="ghost" size="sm">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button size="sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -99,6 +121,27 @@ export function Header() {
             >
               Cart
             </Link>
+            
+            {/* Mobile Auth Links */}
+            {!isAuthenticated && (
+              <>
+                <div className="border-t border-border my-2"></div>
+                <Link
+                  href="/auth/login"
+                  className="block px-4 py-2 text-foreground hover:bg-muted rounded-lg transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="block px-4 py-2 text-accent hover:bg-muted rounded-lg transition-colors font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         )}
       </nav>

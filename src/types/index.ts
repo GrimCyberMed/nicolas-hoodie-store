@@ -58,3 +58,19 @@ export interface ContactFormData {
   message: string;
   subject?: string;
 }
+
+// Auth Types
+export interface UserRole {
+  id: string;
+  user_id: string;
+  role: 'admin' | 'customer';
+  created_at: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  full_name?: string;
+  role?: 'admin' | 'customer';
+  created_at: string;
+}
