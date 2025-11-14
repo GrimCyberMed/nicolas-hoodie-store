@@ -16,11 +16,17 @@ export async function signUp(email: string, password: string, fullName?: string)
       data: {
         full_name: fullName,
       },
+      emailRedirectTo: undefined,
     },
   });
 
   if (error) {
-    throw error;
+    console.error('Supabase signup error:', error);
+    throw new Error(error.message || 'Failed to create account');
+  }
+
+  if (!data.user) {
+    throw new Error('No user returned from signup');
   }
 
   return data;

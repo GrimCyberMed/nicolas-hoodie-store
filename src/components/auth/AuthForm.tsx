@@ -49,6 +49,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
       setIsLoading(true);
       await onSubmit(email, password, fullName);
     } catch (err: any) {
+      console.error('Auth error:', err);
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
