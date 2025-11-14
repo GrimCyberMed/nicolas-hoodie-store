@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 export interface AuthUser extends User {
   role?: 'admin' | 'customer';
@@ -134,7 +134,7 @@ export async function updatePassword(newPassword: string) {
  */
 export function onAuthStateChange(callback: (user: User | null) => void) {
   const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
+    (_event: AuthChangeEvent, session) => {
       callback(session?.user ?? null);
     }
   );
