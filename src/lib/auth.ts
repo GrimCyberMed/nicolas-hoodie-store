@@ -83,11 +83,16 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   }
 
   // Fetch user role from user_roles table
-  const { data: roleData } = await supabase
+  const { data: roleData, error: roleError } = await supabase
     .from('user_roles')
     .select('role')
     .eq('user_id', user.id)
     .single();
+
+  // If there's an error fetching role, log it but don't fail
+  if (roleError) {
+    console.error('Error fetching user role:', roleError);
+  }
 
   return {
     ...user,

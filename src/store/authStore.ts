@@ -42,13 +42,19 @@ export const useAuthStore = create<AuthState>()(
       register: async (email: string, password: string, fullName?: string) => {
         try {
           set({ isLoading: true });
-          await signUp(email, password, fullName);
-          const user = await getCurrentUser();
-          set({ 
-            user, 
-            isAuthenticated: !!user,
-            isLoading: false 
-          });
+          const result = await signUp(email, password, fullName);
+          
+          // If signup successful, get user info
+          if (result.user) {
+            const user = await getCurrentUser();
+            set({ 
+              user, 
+              isAuthenticated: !!user,
+              isLoading: false 
+            });
+          } else {
+            set({ isLoading: false });
+          }
         } catch (error) {
           set({ isLoading: false });
           throw error;
