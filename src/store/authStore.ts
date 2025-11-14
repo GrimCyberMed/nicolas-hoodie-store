@@ -44,12 +44,17 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true });
           const result = await signUp(email, password, fullName);
           
-          // If signup successful, get user info
+          // If signup successful, set user directly from signup result
           if (result.user) {
-            const user = await getCurrentUser();
+            // Create AuthUser from signup result
+            const authUser = {
+              ...result.user,
+              role: 'customer' as const, // New users are always customers initially
+            };
+            
             set({ 
-              user, 
-              isAuthenticated: !!user,
+              user: authUser,
+              isAuthenticated: true,
               isLoading: false 
             });
           } else {
