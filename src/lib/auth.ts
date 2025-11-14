@@ -9,27 +9,32 @@ export interface AuthUser extends User {
  * Sign up a new user with email and password
  */
 export async function signUp(email: string, password: string, fullName?: string) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
       },
-      emailRedirectTo: undefined,
-    },
-  });
+    });
 
-  if (error) {
-    console.error('Supabase signup error:', error);
-    throw new Error(error.message || 'Failed to create account');
+    if (error) {
+      console.error('Supabase signup error:', error);
+      throw new Error(error.message || 'Failed to create account');
+    }
+
+    if (!data.user) {
+      throw new Error('No user returned from signup');
+    }
+
+    console.log('Signup successful:', data);
+    return data;
+  } catch (err) {
+    console.error('Signup exception:', err);
+    throw err;
   }
-
-  if (!data.user) {
-    throw new Error('No user returned from signup');
-  }
-
-  return data;
 }
 
 /**
