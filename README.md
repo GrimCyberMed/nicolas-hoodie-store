@@ -1,6 +1,9 @@
 # Nicolas Hoodie Store
 
-A modern e-commerce website built with Next.js 14, Supabase, Stripe, and Tailwind CSS. This project is designed as a learning journey from complete beginner to launching a functional online store.
+A modern e-commerce platform built with Next.js 16, Supabase, Stripe, and Tailwind CSS.
+
+> **📊 Project Status:** See [`PROJECT-STATUS.md`](./PROJECT-STATUS.md) for current progress and session notes.  
+> **📚 Documentation:** All project docs are in [`.project-docs/`](./.project-docs/) folder.
 
 ## 🚀 Tech Stack
 
