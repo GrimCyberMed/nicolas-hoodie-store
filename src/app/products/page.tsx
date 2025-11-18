@@ -10,6 +10,7 @@ import { ProductGrid } from '@/components/products/ProductGrid';
 import { Pagination } from '@/components/products/Pagination';
 import { useFilterStore } from '@/store/filterStore';
 import { Product } from '@/types';
+import { AdBanner, AdSidebar } from '@/components/ads';
 
 interface ProductsResponse {
   products: Product[];
@@ -115,11 +116,21 @@ export default function ProductsPage() {
             <SearchBar />
           </div>
 
+          {/* Top Banner Ad */}
+          <div className="mb-6">
+            <AdBanner position="banner_top" targetPage="products" />
+          </div>
+
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Filter Sidebar */}
             <aside className="lg:col-span-1">
               <FilterPanel />
+              
+              {/* Sidebar Ads */}
+              <div className="mt-6 hidden lg:block">
+                <AdSidebar position="left_sidebar" targetPage="products" maxAds={2} />
+              </div>
             </aside>
 
             {/* Products Grid */}
@@ -144,6 +155,16 @@ export default function ProductsPage() {
               {/* Pagination */}
               {!isLoading && <Pagination totalItems={totalItems} />}
             </div>
+
+            {/* Right Sidebar Ads */}
+            <aside className="lg:col-span-1 hidden lg:block">
+              <AdSidebar position="right_sidebar" targetPage="products" maxAds={3} />
+            </aside>
+          </div>
+          
+          {/* Bottom Banner Ad */}
+          <div className="mt-8">
+            <AdBanner position="banner_bottom" targetPage="products" />
           </div>
         </div>
       </main>

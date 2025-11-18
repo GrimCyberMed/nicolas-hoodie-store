@@ -107,9 +107,11 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  <Button variant="primary" size="lg" className="w-full mb-3">
-                    Proceed to Checkout
-                  </Button>
+                  <Link href="/checkout">
+                    <Button variant="primary" size="lg" className="w-full mb-3">
+                      Proceed to Checkout
+                    </Button>
+                  </Link>
 
                   <Link href="/products">
                     <Button variant="outline" size="md" className="w-full">

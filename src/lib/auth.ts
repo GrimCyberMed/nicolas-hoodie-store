@@ -77,33 +77,58 @@ export async function getSession(): Promise<Session | null> {
  * Get the current user
  */
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  try {
+    // First try to get the session (this reads from cookies)
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Error getting session:', sessionError);
+    }
+    
+    // If no session, try getUser which will validate with server
+    if (!session) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        return null;
+      }
+      
+      // Fetch user role
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+      
+      return {
+        ...user,
+        role: roleData?.role || 'customer',
+      } as AuthUser;
+    }
 
-  if (error) {
-    console.error('Error getting user:', error);
+    // We have a session, use the user from it
+    const user = session.user;
+
+    // Fetch user role from user_roles table
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+
+    // If there's an error fetching role, log it but don't fail
+    if (roleError) {
+      console.error('Error fetching user role:', roleError);
+    }
+
+    return {
+      ...user,
+      role: roleData?.role || 'customer',
+    } as AuthUser;
+  } catch (error) {
+    console.error('Error getting current user:', error);
     return null;
   }
-
-  if (!user) {
-    return null;
-  }
-
-  // Fetch user role from user_roles table
-  const { data: roleData, error: roleError } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', user.id)
-    .single();
-
-  // If there's an error fetching role, log it but don't fail
-  if (roleError) {
-    console.error('Error fetching user role:', roleError);
-  }
-
-  return {
-    ...user,
-    role: roleData?.role || 'customer',
-  } as AuthUser;
 }
 
 /**

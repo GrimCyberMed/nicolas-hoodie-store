@@ -31,6 +31,12 @@ export interface Order {
   user_id?: string;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   total: number;
+  subtotal?: number;
+  discount_amount?: number;
+  shipping_cost?: number;
+  shipping_address?: ShippingAddress;
+  payment_method?: string;
+  payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
   created_at: string;
   updated_at?: string;
 }
@@ -41,6 +47,28 @@ export interface OrderItem {
   product_id: string;
   quantity: number;
   price: number;
+}
+
+// Shipping Types
+export interface ShippingAddress {
+  full_name: string;
+  email: string;
+  phone: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+}
+
+// Checkout Types
+export interface CheckoutData {
+  shipping_address: ShippingAddress;
+  billing_same_as_shipping: boolean;
+  billing_address?: ShippingAddress;
+  payment_method: 'card' | 'paypal';
+  discount_code?: string;
 }
 
 // Customer Types

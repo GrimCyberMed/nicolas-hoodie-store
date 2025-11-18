@@ -55,14 +55,16 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  // Refresh session if expired
+  // IMPORTANT: Use getUser() instead of getSession() for proper token refresh
+  // getUser() validates the JWT with Supabase Auth server and refreshes if needed
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
   // Protect /admin routes
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    if (!session) {
+    if (!user || userError) {
       // Redirect to login if not authenticated
       const redirectUrl = req.nextUrl.clone();
       redirectUrl.pathname = '/auth/login';
@@ -74,7 +76,7 @@ export async function middleware(req: NextRequest) {
     const { data: roleData } = await supabase
       .from('user_roles')
       .select('role')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .single();
 
     if (roleData?.role !== 'admin') {
@@ -87,7 +89,7 @@ export async function middleware(req: NextRequest) {
 
   // Protect /profile route
   if (req.nextUrl.pathname.startsWith('/profile')) {
-    if (!session) {
+    if (!user || userError) {
       const redirectUrl = req.nextUrl.clone();
       redirectUrl.pathname = '/auth/login';
       redirectUrl.searchParams.set('redirect', req.nextUrl.pathname);
@@ -96,7 +98,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (req.nextUrl.pathname.startsWith('/auth') && session) {
+  if (req.nextUrl.pathname.startsWith('/auth') && user && !userError) {
     const redirectUrl = req.nextUrl.clone();
     redirectUrl.pathname = '/';
     return NextResponse.redirect(redirectUrl);

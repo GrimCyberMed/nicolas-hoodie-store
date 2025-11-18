@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -6,14 +6,10 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 // Only throw error in production or when actually using Supabase
 const isConfigured = supabaseUrl && supabaseAnonKey;
 
+// Use createBrowserClient from @supabase/ssr for cookie-based session management
+// This ensures the session is stored in cookies that the middleware can read
 export const supabase = isConfigured 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
-      }
-    })
+  ? createBrowserClient(supabaseUrl, supabaseAnonKey)
   : null as any; // Fallback for build time
 
 // Helper function to fetch all products
