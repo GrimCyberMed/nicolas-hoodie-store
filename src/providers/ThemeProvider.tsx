@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useThemeStore } from '@/store/themeStore';
 import { supabase } from '@/lib/supabase';
 
@@ -17,9 +17,13 @@ interface SiteTheme {
   custom_css: string | null;
 }
 
+// Map theme names to CSS data attribute values
+const themeNameToSlug = (name: string): string => {
+  return name.toLowerCase().replace(/['']/g, '').replace(/\s+/g, '-');
+};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = useThemeStore((state) => state.theme);
-  const [siteTheme, setSiteTheme] = useState<SiteTheme | null>(null);
 
   // Handle light/dark mode
   useEffect(() => {
@@ -39,16 +43,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           .single();
 
         if (error) {
-          console.error('Error fetching active theme:', error);
+          // If no theme found or error, use default (no site-theme attribute)
+          document.documentElement.removeAttribute('data-site-theme');
           return;
         }
 
         if (data) {
-          setSiteTheme(data);
-          applyThemeColors(data);
+          applySiteTheme(data);
         }
       } catch (error) {
-        console.error('Error fetching theme:', error);
+        // Use default theme on error
+        document.documentElement.removeAttribute('data-site-theme');
       }
     }
 
@@ -76,45 +81,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Convert hex color to RGB values
-  const hexToRgb = (hex: string): string => {
-    // Remove # if present
-    hex = hex.replace('#', '');
-    
-    // Parse hex values
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    return `${r} ${g} ${b}`;
-  };
-
-  // Apply theme colors as CSS variables
-  const applyThemeColors = (themeData: SiteTheme) => {
+  // Apply site theme using data attribute for CSS-based theming
+  const applySiteTheme = (themeData: SiteTheme) => {
     const root = document.documentElement;
-
-    if (themeData.primary_color) {
-      root.style.setProperty('--color-primary', hexToRgb(themeData.primary_color));
+    const themeSlug = themeNameToSlug(themeData.name);
+    
+    // Set the site theme attribute for CSS-based theming
+    // This allows proper light/dark mode support via CSS
+    if (themeData.name === 'Default Theme') {
+      // Remove site theme attribute for default theme
+      root.removeAttribute('data-site-theme');
+    } else {
+      root.setAttribute('data-site-theme', themeSlug);
     }
 
-    if (themeData.secondary_color) {
-      root.style.setProperty('--color-secondary', hexToRgb(themeData.secondary_color));
-    }
-
-    if (themeData.accent_color) {
-      root.style.setProperty('--color-accent', hexToRgb(themeData.accent_color));
-    }
-
-    if (themeData.background_color) {
-      root.style.setProperty('--color-background', hexToRgb(themeData.background_color));
-    }
-
-    if (themeData.text_color) {
-      root.style.setProperty('--color-foreground', hexToRgb(themeData.text_color));
-    }
-
+    // Apply font family if specified
     if (themeData.font_family) {
       root.style.setProperty('--font-family', themeData.font_family);
+    } else {
+      root.style.removeProperty('--font-family');
     }
 
     // Apply custom CSS if provided
@@ -126,9 +111,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         document.head.appendChild(customStyleElement);
       }
       customStyleElement.textContent = themeData.custom_css;
+    } else {
+      // Remove custom CSS if not provided
+      const customStyleElement = document.getElementById('site-theme-custom-css');
+      if (customStyleElement) {
+        customStyleElement.remove();
+      }
     }
-
-    console.log(`Theme applied: ${themeData.name}`);
   };
 
   return <>{children}</>;

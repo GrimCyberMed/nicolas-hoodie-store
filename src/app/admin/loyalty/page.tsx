@@ -48,10 +48,22 @@ export default function LoyaltyPage() {
   const [isLoading, setIsLoading] = useState(true);
   
   // Form states
+  const [showLevelForm, setShowLevelForm] = useState(false);
+  const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null);
   const [showMilestoneForm, setShowMilestoneForm] = useState(false);
   const [editingMilestone, setEditingMilestone] = useState<SpendingMilestone | null>(null);
   const [showRewardForm, setShowRewardForm] = useState(false);
   const [editingReward, setEditingReward] = useState<LevelUpReward | null>(null);
+
+  const [levelForm, setLevelForm] = useState({
+    level_number: 1,
+    name: '',
+    tier: 'bronze',
+    min_spending: 0,
+    points_multiplier: 1.0,
+    icon: '⭐',
+    color: '#CD7F32',
+  });
 
   const [milestoneForm, setMilestoneForm] = useState({
     name: '',
@@ -106,6 +118,67 @@ export default function LoyaltyPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Level handlers
+  const handleLevelSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingLevel) {
+        await supabase
+          .from('loyalty_levels')
+          .update(levelForm)
+          .eq('id', editingLevel.id);
+      } else {
+        await supabase
+          .from('loyalty_levels')
+          .insert([levelForm]);
+      }
+      resetLevelForm();
+      fetchData();
+    } catch (error) {
+      console.error('Error saving level:', error);
+      alert('Failed to save level');
+    }
+  };
+
+  const handleEditLevel = (level: LoyaltyLevel) => {
+    setEditingLevel(level);
+    setLevelForm({
+      level_number: level.level_number,
+      name: level.name,
+      tier: level.tier,
+      min_spending: level.min_spending,
+      points_multiplier: level.points_multiplier,
+      icon: level.icon,
+      color: level.color,
+    });
+    setShowLevelForm(true);
+  };
+
+  const handleDeleteLevel = async (id: string) => {
+    if (!confirm('Delete this level? This will also delete associated rewards.')) return;
+    try {
+      await supabase.from('loyalty_levels').delete().eq('id', id);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting level:', error);
+      alert('Failed to delete level');
+    }
+  };
+
+  const resetLevelForm = () => {
+    setLevelForm({
+      level_number: levels.length + 1,
+      name: '',
+      tier: 'bronze',
+      min_spending: 0,
+      points_multiplier: 1.0,
+      icon: '⭐',
+      color: '#CD7F32',
+    });
+    setEditingLevel(null);
+    setShowLevelForm(false);
   };
 
   // Milestone handlers
@@ -291,12 +364,113 @@ export default function LoyaltyPage() {
       {/* Levels Tab */}
       {activeTab === 'levels' && (
         <div>
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-              <strong>How it works:</strong> Customers level up based on their total spending. 
-              Each level has a points multiplier that increases their earning rate.
-            </p>
+          <div className="flex justify-between items-center mb-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex-1 mr-4">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                <strong>How it works:</strong> Customers level up based on their total spending. 
+                Each level has a points multiplier that increases their earning rate.
+              </p>
+            </div>
+            <Button onClick={() => setShowLevelForm(true)}>
+              Add Level
+            </Button>
           </div>
+
+          {/* Level Form */}
+          {showLevelForm && (
+            <div className="bg-card border border-border rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">
+                {editingLevel ? 'Edit Level' : 'New Level'}
+              </h3>
+              <form onSubmit={handleLevelSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Level Number *</label>
+                    <input
+                      type="number"
+                      value={levelForm.level_number}
+                      onChange={(e) => setLevelForm({ ...levelForm, level_number: parseInt(e.target.value) })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                      required
+                      min="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Name *</label>
+                    <input
+                      type="text"
+                      value={levelForm.name}
+                      onChange={(e) => setLevelForm({ ...levelForm, name: e.target.value })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                      required
+                      placeholder="e.g., Champion"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Tier *</label>
+                    <select
+                      value={levelForm.tier}
+                      onChange={(e) => setLevelForm({ ...levelForm, tier: e.target.value })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                    >
+                      <option value="bronze">Bronze</option>
+                      <option value="silver">Silver</option>
+                      <option value="gold">Gold</option>
+                      <option value="platinum">Platinum</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Min Spending (€) *</label>
+                    <input
+                      type="number"
+                      value={levelForm.min_spending}
+                      onChange={(e) => setLevelForm({ ...levelForm, min_spending: parseFloat(e.target.value) })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                      required
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Points Multiplier *</label>
+                    <input
+                      type="number"
+                      value={levelForm.points_multiplier}
+                      onChange={(e) => setLevelForm({ ...levelForm, points_multiplier: parseFloat(e.target.value) })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                      required
+                      min="1"
+                      max="10"
+                      step="0.1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Icon</label>
+                    <input
+                      type="text"
+                      value={levelForm.icon}
+                      onChange={(e) => setLevelForm({ ...levelForm, icon: e.target.value })}
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground"
+                      placeholder="⭐"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1">Color</label>
+                    <input
+                      type="color"
+                      value={levelForm.color}
+                      onChange={(e) => setLevelForm({ ...levelForm, color: e.target.value })}
+                      className="w-full h-10 bg-background border border-border rounded-lg"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <Button type="submit">{editingLevel ? 'Update' : 'Create'}</Button>
+                  <Button type="button" variant="outline" onClick={resetLevelForm}>Cancel</Button>
+                </div>
+              </form>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {levels.map((level) => (
@@ -314,6 +488,20 @@ export default function LoyaltyPage() {
                 <div className="mt-3 text-sm text-muted-foreground">
                   <div>Min Spend: €{level.min_spending}</div>
                   <div>Multiplier: {level.points_multiplier}x</div>
+                </div>
+                <div className="mt-3 flex gap-2 justify-center">
+                  <button
+                    onClick={() => handleEditLevel(level)}
+                    className="px-3 py-1 bg-accent text-white rounded text-xs"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteLevel(level.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded text-xs"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}

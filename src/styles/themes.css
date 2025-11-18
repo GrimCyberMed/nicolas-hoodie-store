@@ -1,3 +1,6 @@
+/* ============================================
+   DEFAULT THEME - Light/Dark Mode
+   ============================================ */
 :root {
   /* Light Mode Colors */
   --color-background: 255 255 255;
@@ -32,6 +35,151 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+}
+
+/* ============================================
+   BLACK FRIDAY THEME - Light/Dark Mode
+   ============================================ */
+[data-site-theme='black-friday'] {
+  /* Light Mode - High contrast sale theme */
+  --color-background: 255 255 255;
+  --color-foreground: 17 24 39;
+  --color-primary: 0 0 0;
+  --color-secondary: 252 211 77;
+  --color-accent: 220 38 38;
+  --color-muted: 243 244 246;
+  --color-border: 209 213 219;
+  --color-card: 255 255 255;
+  --color-card-foreground: 17 24 39;
+}
+
+[data-site-theme='black-friday'][data-theme='dark'] {
+  /* Dark Mode - Black Friday */
+  --color-background: 17 24 39;
+  --color-foreground: 255 255 255;
+  --color-primary: 252 211 77;
+  --color-secondary: 156 163 175;
+  --color-accent: 248 113 113;
+  --color-muted: 31 41 55;
+  --color-border: 55 65 81;
+  --color-card: 31 41 55;
+  --color-card-foreground: 255 255 255;
+}
+
+/* ============================================
+   CHRISTMAS THEME - Light/Dark Mode
+   ============================================ */
+[data-site-theme='christmas'] {
+  /* Light Mode - Festive Christmas */
+  --color-background: 254 243 199;
+  --color-foreground: 31 41 55;
+  --color-primary: 220 38 38;
+  --color-secondary: 22 163 74;
+  --color-accent: 252 211 77;
+  --color-muted: 254 249 195;
+  --color-border: 253 230 138;
+  --color-card: 255 255 255;
+  --color-card-foreground: 31 41 55;
+}
+
+[data-site-theme='christmas'][data-theme='dark'] {
+  /* Dark Mode - Christmas */
+  --color-background: 31 41 55;
+  --color-foreground: 254 243 199;
+  --color-primary: 248 113 113;
+  --color-secondary: 74 222 128;
+  --color-accent: 252 211 77;
+  --color-muted: 55 65 81;
+  --color-border: 75 85 99;
+  --color-card: 55 65 81;
+  --color-card-foreground: 254 243 199;
+}
+
+/* ============================================
+   VALENTINE'S DAY THEME - Light/Dark Mode
+   ============================================ */
+[data-site-theme='valentines-day'] {
+  /* Light Mode - Romantic Valentine's */
+  --color-background: 254 242 242;
+  --color-foreground: 31 41 55;
+  --color-primary: 236 72 153;
+  --color-secondary: 220 38 38;
+  --color-accent: 253 230 138;
+  --color-muted: 252 231 243;
+  --color-border: 251 207 232;
+  --color-card: 255 255 255;
+  --color-card-foreground: 31 41 55;
+}
+
+[data-site-theme='valentines-day'][data-theme='dark'] {
+  /* Dark Mode - Valentine's */
+  --color-background: 31 41 55;
+  --color-foreground: 252 231 243;
+  --color-primary: 244 114 182;
+  --color-secondary: 248 113 113;
+  --color-accent: 253 230 138;
+  --color-muted: 55 65 81;
+  --color-border: 75 85 99;
+  --color-card: 55 65 81;
+  --color-card-foreground: 252 231 243;
+}
+
+/* ============================================
+   HALLOWEEN THEME - Light/Dark Mode
+   ============================================ */
+[data-site-theme='halloween'] {
+  /* Light Mode - Spooky Halloween */
+  --color-background: 255 247 237;
+  --color-foreground: 24 24 27;
+  --color-primary: 249 115 22;
+  --color-secondary: 31 41 55;
+  --color-accent: 168 85 247;
+  --color-muted: 254 243 199;
+  --color-border: 253 186 116;
+  --color-card: 255 255 255;
+  --color-card-foreground: 24 24 27;
+}
+
+[data-site-theme='halloween'][data-theme='dark'] {
+  /* Dark Mode - Halloween */
+  --color-background: 24 24 27;
+  --color-foreground: 243 244 246;
+  --color-primary: 251 146 60;
+  --color-secondary: 107 114 128;
+  --color-accent: 192 132 252;
+  --color-muted: 39 39 42;
+  --color-border: 63 63 70;
+  --color-card: 39 39 42;
+  --color-card-foreground: 243 244 246;
+}
+
+/* ============================================
+   SUMMER THEME - Light/Dark Mode
+   ============================================ */
+[data-site-theme='summer'] {
+  /* Light Mode - Bright Summer */
+  --color-background: 254 243 199;
+  --color-foreground: 31 41 55;
+  --color-primary: 245 158 11;
+  --color-secondary: 6 182 212;
+  --color-accent: 252 211 77;
+  --color-muted: 254 249 195;
+  --color-border: 253 230 138;
+  --color-card: 255 255 255;
+  --color-card-foreground: 31 41 55;
+}
+
+[data-site-theme='summer'][data-theme='dark'] {
+  /* Dark Mode - Summer */
+  --color-background: 31 41 55;
+  --color-foreground: 254 243 199;
+  --color-primary: 251 191 36;
+  --color-secondary: 34 211 238;
+  --color-accent: 252 211 77;
+  --color-muted: 55 65 81;
+  --color-border: 75 85 99;
+  --color-card: 55 65 81;
+  --color-card-foreground: 254 243 199;
 }
 
 /* Smooth transitions for theme changes */
