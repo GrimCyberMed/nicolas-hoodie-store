@@ -58,7 +58,7 @@ export function AdSidebar({
       if (data && data.length > 0) {
         setAds(data);
         // Track impressions for all ads
-        data.forEach(ad => trackImpression(ad.id));
+        data.forEach((ad: Advertisement) => trackImpression(ad.id));
       }
     } catch (error) {
       console.error('Error fetching ads:', error);
